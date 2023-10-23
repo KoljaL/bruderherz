@@ -4,6 +4,13 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Video Wall</title>
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+        <link rel="manifest" href="./manifest.json" />
+        <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+        <meta property="og:title" content="Video Wall" />
+        <meta property="og:url" content="http://doubtfully.de/mirevi/brudi/wall/" />
+        <meta property="og:image" content="http://doubtfully.de/mirevi/brudi/wall/icons/icon.png" />
         <style>
             :root {
                 --colors-gray1: hsl(0, 0%, 8.5%);
@@ -19,7 +26,7 @@
                 --colors-gray11: hsl(0, 0%, 62.8%);
                 --colors-gray12: hsl(0, 0%, 93%);
                 --colors-gray13: hsl(0, 0%, 97%);
-                --tng-blue: rgb(51, 102, 204);
+                --tng-blue: #3366cc;
                 --svelte: rgb(255, 62, 0);
                 --yellow-dark: #e5c07b;
                 --darkyellow-dark: #d19a66;
@@ -59,14 +66,30 @@
                 font-family: 'OverpassRegular';
             }
 
-            h1 {
-                text-align: center;
+            header {
                 position: sticky;
                 top: 0;
-                margin: 0;
+                margin: 0 auto;
+                max-width: 800px;
                 padding: 1rem;
+                padding-top: 0.5rem;
                 background-color: var(--colors-gray2);
                 z-index: 3;
+                display: flex;
+                justify-content: space-between;
+                align-items: end;
+                & img {
+                    width: 50px;
+                    height: 50px;
+                    margin: 0;
+                    padding: 0;
+                }
+                & h1 {
+                    margin: 0;
+                    padding: 0;
+                    font-size: 1.5rem;
+                    color: var(--tng-blue);
+                }
             }
 
             #videoGrid {
@@ -240,10 +263,82 @@
                     font-weight: bold;
                 }
             }
+
+            .switch {
+                position: relative;
+                display: inline-block;
+                transform: scale(0.5) translateY(-1.5rem);
+                width: 60px;
+                height: 34px;
+
+                & input {
+                    opacity: 0;
+                    width: 0;
+                    height: 0;
+                }
+
+                .label {
+                    font-size: 1.5rem;
+                    color: var(--colors-gray9);
+                    white-space: nowrap;
+                    position: relative;
+                    top: 2rem;
+                    right: 0;
+                    float: right;
+                }
+
+                & .slider {
+                    position: absolute;
+                    cursor: pointer;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: var(--colors-gray9);
+                    border-radius: 34px;
+                    -webkit-transition: 0.4s;
+                    transition: 0.4s;
+                }
+
+                & .slider:before {
+                    position: absolute;
+                    content: '';
+                    height: 26px;
+                    width: 26px;
+                    left: 4px;
+                    bottom: 4px;
+                    background-color: var(--colors-gray2);
+                    border-radius: 50%;
+                    -webkit-transition: 0.4s;
+                    transition: 0.4s;
+                }
+
+                & input:checked + .slider {
+                    background-color: var(--tng-blue);
+                }
+
+                & input:focus + .slider {
+                    box-shadow: 0 0 1px var(--tng-blue);
+                }
+
+                & input:checked + .slider:before {
+                    -webkit-transform: translateX(26px);
+                    -ms-transform: translateX(26px);
+                    transform: translateX(26px);
+                }
+            }
         </style>
     </head>
     <body>
-        <h1>Video Wall</h1>
+        <header>
+            <img src="./icon.svg" alt="Logo" />
+            <h1>Video Wall</h1>
+            <label class="switch">
+                <span class="label"> auto update </span>
+                <input type="checkbox" id="autoUpdate" autocomplete="off" />
+                <span class="slider round"></span>
+            </label>
+        </header>
         <div id="videoGrid"></div>
         <div id="selectListWrapper">
             <div class="selectListModal shadow">
@@ -273,7 +368,8 @@
             const message = document.querySelector('.message');
             const searchInput = document.getElementById('searchInput');
             const videoForMonitor = document.querySelector('.videoForMonitor');
-
+            const autoUpdate = document.getElementById('autoUpdate');
+            let autoUpdateInterval;
             // start the script after the page is loaded
             window.addEventListener('load', async () => {
                 allVideos = await getData(ALLVIDEOS);
@@ -284,11 +380,40 @@
 
                 // create the select list, but its hidden
                 createSelectList(allVideos);
+
+                // setTimeout(() => {
+                //     fetchFrequently(1);
+                // }, 1000);
             });
 
             ///////////////////////////////////////
             ////////////// FUNCTIONS //////////////
             ///////////////////////////////////////
+
+            //
+            // Fetch the data from the server every x seconds
+            //
+
+            autoUpdate.addEventListener('change', () => {
+                if (autoUpdate.checked) {
+                    fetchFrequently(1);
+                } else {
+                    clearInterval(autoUpdateInterval);
+                }
+            });
+
+            function fetchFrequently(s) {
+                autoUpdateInterval = setInterval(() => {
+                    getData(CURRENTVIDEOS).then((data) => {
+                        // compare the current videos with the new data
+                        // if the data is different, render the grid with the new data
+                        if (JSON.stringify(currentVideos) !== JSON.stringify(data)) {
+                            currentVideos = data;
+                            renderGrid(currentVideos);
+                        }
+                    });
+                }, s * 1000);
+            }
 
             searchInput.addEventListener('input', function () {
                 const searchTerm = searchInput.value.toLowerCase();
