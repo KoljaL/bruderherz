@@ -369,7 +369,8 @@
             const searchInput = document.getElementById('searchInput');
             const videoForMonitor = document.querySelector('.videoForMonitor');
             const autoUpdate = document.getElementById('autoUpdate');
-            let autoUpdateInterval;
+            let autoUpdateIntervalInstance;
+            const autoUpdateInterval = 1; // seconds
             // start the script after the page is loaded
             window.addEventListener('load', async () => {
                 allVideos = await getData(ALLVIDEOS);
@@ -380,49 +381,11 @@
 
                 // create the select list, but its hidden
                 createSelectList(allVideos);
-
-                // setTimeout(() => {
-                //     fetchFrequently(1);
-                // }, 1000);
             });
 
             ///////////////////////////////////////
             ////////////// FUNCTIONS //////////////
             ///////////////////////////////////////
-
-            //
-            // Fetch the data from the server every x seconds
-            //
-
-            autoUpdate.addEventListener('change', () => {
-                if (autoUpdate.checked) {
-                    fetchFrequently(1);
-                } else {
-                    clearInterval(autoUpdateInterval);
-                }
-            });
-
-            function fetchFrequently(s) {
-                autoUpdateInterval = setInterval(() => {
-                    getData(CURRENTVIDEOS).then((data) => {
-                        // compare the current videos with the new data
-                        // if the data is different, render the grid with the new data
-                        if (JSON.stringify(currentVideos) !== JSON.stringify(data)) {
-                            currentVideos = data;
-                            renderGrid(currentVideos);
-                        }
-                    });
-                }, s * 1000);
-            }
-
-            searchInput.addEventListener('input', function () {
-                const searchTerm = searchInput.value.toLowerCase();
-                const filteredData = allVideos.filter((item) => {
-                    const name = item.Name.toLowerCase();
-                    return name.includes(searchTerm);
-                });
-                createSelectList(filteredData);
-            });
 
             //
             // Fetch json data
@@ -540,8 +503,10 @@
                         if (data.status === 'success') {
                             renderGrid(currentVideos);
                             selectListWrapper.style.display = 'none';
-                            message.innerHTML = /*HTML*/ `<p>The video for monitor ${forMonitor} has been changed to: <div class="newVideoTitle">${newVideo.Name}</div></p>
-                            `;
+                            message.innerHTML = /*HTML*/ `
+                                <div>The video for monitor ${forMonitor} has been changed to:
+                                    <div class="newVideoTitle">${newVideo.Name}</div>
+                                </div>`;
                             message.style.display = 'block';
 
                             setTimeout(() => {
@@ -555,6 +520,38 @@
                         console.error('Error:', error);
                     });
             }
+
+            //
+            // if the autoUpdate checkbox is checked, fetch the data every 5 seconds
+            //
+            autoUpdate.addEventListener('change', () => {
+                if (autoUpdate.checked) {
+                    autoUpdateIntervalInstance = setInterval(() => {
+                        getData(CURRENTVIDEOS).then((data) => {
+                            // compare the current videos with the new data
+                            // if the data is different, render the grid with the new data
+                            if (JSON.stringify(currentVideos) !== JSON.stringify(data)) {
+                                currentVideos = data;
+                                renderGrid(currentVideos);
+                            }
+                        });
+                    }, autoUpdateInterval * 1000);
+                } else {
+                    clearInterval(autoUpdateIntervalInstance);
+                }
+            });
+
+            //
+            // Search for a video
+            //
+            searchInput.addEventListener('input', function () {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filteredData = allVideos.filter((item) => {
+                    const name = item.Name.toLowerCase();
+                    return name.includes(searchTerm);
+                });
+                createSelectList(filteredData);
+            });
 
             //
             // Event Listener to close the selectListWrapper when clicking outside of it
