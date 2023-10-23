@@ -179,14 +179,30 @@
                 top: 0;
                 margin: 0;
                 padding: 0;
-                /* background-color: var(--colors-gray1); */
                 border-top-right-radius: 0.5rem;
                 border-top-left-radius: 0.5rem;
+                padding-inline: 1.5rem;
                 z-index: 1;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                white-space: nowrap;
                 & h2 {
                     margin: 0;
                     padding-top: 1rem;
                     font-size: 1.5rem;
+                }
+                & input {
+                    max-width: 50%;
+                    padding: 0;
+                    margin-top: 1rem;
+                    border: none;
+                    border-bottom: 1px solid var(--colors-gray9);
+                    background-color: var(--colors-gray2);
+                    color: var(--colors-gray11);
+                    font-size: 1rem;
+                    border-radius: 0;
+                    outline: none;
                 }
             }
             .selectListElement {
@@ -231,7 +247,10 @@
         <div id="videoGrid"></div>
         <div id="selectListWrapper">
             <div class="selectListModal shadow">
-                <div id="selectListHeader"></div>
+                <div id="selectListHeader">
+                    <h2 class="videoForMonitor"></h2>
+                    <input type="text" id="searchInput" placeholder="Search for a video..." />
+                </div>
                 <div id="selectListElements"></div>
             </div>
         </div>
@@ -252,6 +271,8 @@
             const selectListWrapper = document.getElementById('selectListWrapper');
             const selectListHeader = document.getElementById('selectListHeader');
             const message = document.querySelector('.message');
+            const searchInput = document.getElementById('searchInput');
+            const videoForMonitor = document.querySelector('.videoForMonitor');
 
             // start the script after the page is loaded
             window.addEventListener('load', async () => {
@@ -268,6 +289,15 @@
             ///////////////////////////////////////
             ////////////// FUNCTIONS //////////////
             ///////////////////////////////////////
+
+            searchInput.addEventListener('input', function () {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filteredData = allVideos.filter((item) => {
+                    const name = item.Name.toLowerCase();
+                    return name.includes(searchTerm);
+                });
+                createSelectList(filteredData);
+            });
 
             //
             // Fetch json data
@@ -318,7 +348,11 @@
                         selectListWrapper.style.display = 'block';
                         // show the current monitor number in the selectListHeader
                         // and add the monitor number as data attribute to use it later ;-)
-                        selectListHeader.innerHTML = /*HTML*/ `<h2 class="videoForMonitor" data-monitor="${videoCard.dataset.monitor}">Monitor ${videoCard.dataset.monitor}</h2>`;
+                        videoForMonitor.innerHTML = `Monitor ${videoCard.dataset.monitor}`;
+                        videoForMonitor.dataset.monitor = videoCard.dataset.monitor;
+                        // selectListHeader.innerHTML = /*HTML*/ `<h2 class="videoForMonitor" data-monitor="${videoCard.dataset.monitor}">Monitor ${videoCard.dataset.monitor}</h2>`;
+                        // reset the search field
+                        searchInput.value = '';
                     });
                 });
             }
