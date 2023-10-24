@@ -62,8 +62,8 @@
                 padding: 0;
                 color: var(--colors-gray11);
                 background-color: var(--colors-gray2);
-                /* font-family: Arial, Helvetica, sans-serif; */
                 font-family: 'OverpassRegular';
+                transition: all 1.5s ease-in-out;
             }
 
             header {
@@ -114,6 +114,7 @@
                 font-size: 1rem;
                 border-radius: 1rem;
                 cursor: pointer;
+                transition: all 0.3s ease-in-out;
             }
 
             .videoCard:hover {
@@ -270,6 +271,7 @@
                 transform: scale(0.5) translateY(-1.5rem);
                 width: 60px;
                 height: 34px;
+                cursor: pointer;
 
                 & input {
                     opacity: 0;
@@ -285,11 +287,14 @@
                     top: 2rem;
                     right: 0;
                     float: right;
+                    transition: all 0.3s ease-in-out;
+                }
+                &:hover .label {
+                    color: var(--tng-blue);
                 }
 
                 & .slider {
                     position: absolute;
-                    cursor: pointer;
                     top: 0;
                     left: 0;
                     right: 0;
@@ -485,8 +490,8 @@
             function sendCurrentVideoList(link) {
                 const forMonitor = selectListHeader.querySelector('.videoForMonitor').dataset.monitor;
                 const newVideo = allVideos.find((video) => video.Link === link);
-                console.log(forMonitor);
-                console.log(newVideo);
+                // console.log(forMonitor);
+                // console.log(newVideo);
                 // replace the current video with the new video
                 currentVideos[forMonitor - 1] = newVideo;
                 // renderGrid(currentVideos);
