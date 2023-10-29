@@ -11,6 +11,8 @@
         <meta property="og:title" content="Video Wall" />
         <meta property="og:url" content="https://doubtfully.de/mirevi/brudi/wall/" />
         <meta property="og:image" content="https://doubtfully.de/mirevi/brudi/wall/style/icons/icon.png" />
+        <script src="./dd.js"></script>
+
         <style>
             :root {
                 --colors-gray1: hsl(0, 0%, 8.5%);
@@ -431,21 +433,15 @@
 
             .zoomOverlay {
                 position: absolute;
-                width: max-content;
-                padding: 1rem;
-                border-radius: 0.5rem;
-                background-color: var(--colors-gray4);
+                width: 200px;
+                height: 110px;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-evenly;
+                align-items: center;
                 z-index: 10;
-
-                & h3 {
-                    margin: 0;
-                    margin-bottom: 0.75rem;
-                    padding: 0;
-                    font-size: 1rem;
-                    color: var(--colors-gray12);
-                }
                 & button {
-                    margin-right: 2rem;
+                    background-color: var(--colors-gray5);
                 }
             }
 
@@ -626,16 +622,18 @@
                 let HTML = '';
                 monitors.forEach((monitor, i) => {
                     HTML += /*HTML*/ `
-                                        <div class="videoCard shadow" data-link="${monitor.video}" data-monitor=${i + 1}>
-                                          <span class=number>${i + 1}</span>
-                                          <span class=title>${monitor.video}</span>
-                                        </div>
-                                        `;
+                    <div class="videoCard shadow" data-link="${monitor.video}" data-monitor=${i + 1}>
+                        <span class=number>${i + 1}</span>
+                        <span class=title>${monitor.video}</span>
+                    </div>
+                    `;
                 });
                 videoGrid.innerHTML = HTML;
 
                 // Add event listener to each videoCard to open the selectListWrapper
                 document.querySelectorAll('.videoCard').forEach((videoCard) => {
+                    // makeDraggable(videoCard);
+
                     videoCard.addEventListener('click', (e) => {
                         if (settingsMode) {
                             // console.log(videoCard);
@@ -653,17 +651,22 @@
                                 x: e.clientX,
                                 y: e.clientY,
                             };
+
                             const cardTitle = e.target.closest('.videoCard').querySelector('.title').innerHTML;
                             const cardNumber = e.target.closest('.videoCard').querySelector('.number').innerHTML;
                             const videoCard = e.target.closest('.videoCard');
                             const isZoomed = videoCard.style.transform === 'scale(1.9)';
+                            const elementPosition = {
+                                x: videoCard.offsetLeft,
+                                y: videoCard.offsetTop,
+                            };
                             const div = document.createElement('div');
                             let HTML = '';
-                            div.style.top = `${clickPosition.y}px`;
-                            div.style.left = `${clickPosition.x}px`;
+                            div.style.top = `${elementPosition.y}px`;
+                            div.style.left = `${elementPosition.x}px`;
                             div.id = 'zoomOverlay';
                             div.classList.add('zoomOverlay');
-                            div.classList.add('shadow');
+                            // div.classList.add('shadow');
                             div.addEventListener('click', (e) => {
                                 if (e.target.id === 'zoom') {
                                     zoomVideo(videoCard, cardTitle, cardNumber, 'in');
@@ -678,12 +681,10 @@
                                 }
                             });
                             if (isZoomed) {
-                                HTML = /*HTML*/ `<h3>Zoom out:  ${cardTitle}</h3>
-                                            <button id=close>Close</button>`;
+                                HTML = /*HTML*/ `<button id=close>Close</button>`;
                             } else {
-                                HTML = /*HTML*/ `<h3>Zoom in:  ${cardTitle}</h3>
-                                            <button id=zoom>Zoom</button>
-                                            <button id=close>Close</button>`;
+                                // HTML = /*HTML*/ `<h3>Zoom in:  ${cardTitle}</h3>
+                                HTML = /*HTML*/ `<button id=zoom>Zoom</button><button id=close>Close</button>`;
                             }
 
                             div.innerHTML = HTML;
@@ -694,8 +695,7 @@
             }
 
             function initZoom(wallPCs) {
-                console.log(wallPCs);
-
+                // console.log(wallPCs);
                 // loop over the wallPCs and zoom the videos
                 for (const [key, value] of Object.entries(wallPCs)) {
                     console.log(`${key}: ${value}`);
@@ -706,42 +706,6 @@
                         zoomVideo(videoCard, cardTitle, cardNumber, 'in');
                     }
                 }
-
-                // find the matching PC behind the monitor number
-                // let wallPC = '';
-                // ['1', '2', '5', '6'].includes(cardNumber) ? (wallPC = 'obenLinks') : null;
-                // ['3', '4', '7', '8'].includes(cardNumber) ? (wallPC = 'obenRechts') : null;
-                // ['9', '10', '13', '14'].includes(cardNumber) ? (wallPC = 'untenLinks') : null;
-                // ['11', '12', '15', '16'].includes(cardNumber) ? (wallPC = 'untenRechts') : null;
-
-                // gameManager.zoom[wallPC] = '';
-                // console.log(gameManager.zoom);
-
-                // create a new FormData object
-                // let formData = new FormData();
-                // formData.append('file', GAMEMANAGER);
-                // formData.append('password', PASSWORD);
-                // formData.append('data', JSON.stringify(gameManager));
-                // // send the current video list to the server
-                // fetch(URL, {
-                //     method: 'POST',
-                //     body: formData,
-                // })
-                //     .then((response) => response.json())
-                //     .then((data) => {
-                //         // console.log('Success:', data);
-                //         if (data.monitor) {
-                //             // document.getElementById('zoomOverlay').remove();
-                //             videoCard.style.transform = 'scale(1)';
-                //             videoCard.style.transformOrigin = 'center';
-                //             videoCard.style.zIndex = '1';
-                //         } else {
-                //             console.log('Error:', data);
-                //         }
-                //     })
-                //     .catch((error) => {
-                //         console.error('Error:', error);
-                //     });
             }
 
             function zoomVideo(videoCard, cardTitle, cardNumber, InOut) {
@@ -766,7 +730,7 @@
                 } else if (InOut === 'out') {
                     gameManager.zoom[wallPC] = '';
                 }
-                console.log(gameManager.zoom);
+                // console.log(gameManager.zoom);
 
                 // create a new FormData object
                 let formData = new FormData();
@@ -815,11 +779,11 @@
                 let HTML = '';
                 videos.forEach((video, i) => {
                     HTML += /*HTML*/ `
-                                        <div class="selectListElement shadow" data-name="${video.Name}" data-monitor=${i + 1}>
-                                          <span class=number>#${i + 1}</span>
-                                          <span class=title>${video.Name}</span>
-                                        </div>
-                                        `;
+                        <div class="selectListElement shadow" data-name="${video.Name}" data-monitor=${i + 1}>
+                            <span class=number>#${i + 1}</span>
+                            <span class=title>${video.Name}</span>
+                        </div>
+                        `;
                 });
                 selectListElements.innerHTML = HTML;
 
@@ -889,9 +853,13 @@
                         getData(GAMEMANAGER).then((data) => {
                             // compare the current videos with the new data
                             // if the data is different, render the grid with the new data
-                            if (JSON.stringify(gameManager.monitor) !== JSON.stringify(data.monitor)) {
+                            if (JSON.stringify(gameManager) !== JSON.stringify(data)) {
                                 gameManager.monitor = data.monitor;
+                                gameManager.zoom = data.zoom;
+                                gameManager.globalSettings = data.globalSettings;
                                 renderGrid(gameManager.monitor);
+                                initZoom(gameManager.zoom);
+                                setSettings(gameManager);
                             }
                         });
                     }, autoUpdateInterval * 1000);
@@ -926,11 +894,6 @@
             //
             settingsModeInput.addEventListener('change', () => {
                 settingsMode = settingsModeInput.checked;
-                // if (settingsMode) {
-                //     document.body.style.transform = `scale(0.5) translateY(-1.5rem)`;
-                // } else {
-                //     document.body.style.transform = `scale(1) translateY(0)`;
-                // }
             });
 
             //
@@ -973,6 +936,11 @@
                     document.querySelector('.menu ul').classList.remove('show');
                 }
             });
+        </script>
+        <script>
+            // makeDraggable(document.querySelectorAll('videoCard'));
+            // makeDraggable(document.getElementById('test-draggable2'));
+            // makeDraggable(document.getElementById('test-full-draggable'));
         </script>
     </body>
 </html>
