@@ -58,21 +58,21 @@ echo json_encode($json);
 
 ///////////////// NEW ///////////////////////
 
-if ($_POST['data']) {
-  $data = json_decode(file_get_contents('php://input'), true);
-  $save = file_put_contents('currentVideos.json', json_encode($data));
-}
+// if ($_POST['data']) {
+//   $data = json_decode(file_get_contents('php://input'), true);
+//   $save = file_put_contents('currentVideos.json', json_encode($data));
+// }
 
 
 
-if ($_GET['filename']) {
-  $filename = $_GET['filename'];
-  $file = json_decode(file_get_contents('files' . $filename . '.json'), true);
-  $json = [
-    'status' => 'success',
-    'message' => 'data saved',
-    'data' => $file,
-  ];
-  header('Content-Type: application/json');
-  echo json_encode($json);
-}
+// if ($_GET['filename']) {
+//   $filename = $_GET['filename'];
+//   $file = json_decode(file_get_contents('files' . $filename . '.json'), true);
+//   $json = [
+//     'status' => 'success',
+//     'message' => 'data saved',
+//     'data' => $file,
+//   ];
+//   header('Content-Type: application/json');
+//   echo json_encode($json);
+// }

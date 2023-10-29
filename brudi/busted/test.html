@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>File Upload Form</title>
+    </head>
+    <body>
+        <h1>File Upload Form</h1>
+        <form method="post" enctype="multipart/form-data">
+            <input type="hidden" name="password" value="moin" />
+            <label for="data">Data:</label>
+            <textarea type="text" id="data" name="data"> </textarea>
+
+            <br /><br />
+
+            <label for="file">File:</label>
+            <input type="text" id="file" name="file" value="test" />
+
+            <br /><br />
+
+            <input type="submit" value="Send" />
+        </form>
+
+        <button id="load">load</button>
+
+        <script>
+            var form = document.querySelector('form');
+            var load = document.querySelector('#load');
+
+            load.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                fetch('http://doubtfully.de/mirevi/brudi/wall/filemanager-neu.php', {
+                    method: 'POST',
+                    body: 'password=moin&file=test',
+                })
+                    .then(function (response) {
+                        return response.text();
+                    })
+                    .then(function (text) {
+                        console.log(text);
+                    });
+            });
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                var data = new FormData(form);
+                fetch('http://doubtfully.de/mirevi/brudi/wall/filemanager-neu.php', {
+                    method: 'POST',
+                    body: data,
+                }).then(function (response) {
+                    console.log(response);
+                });
+            });
+        </script>
+    </body>
+</html>
