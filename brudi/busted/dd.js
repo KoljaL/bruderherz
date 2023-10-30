@@ -76,6 +76,7 @@ function makeDraggable(elmnt) {
         // set the element's new position:
         elmnt.style.top = elmnt.offsetTop - pos2 + 'px';
         elmnt.style.left = elmnt.offsetLeft - pos1 + 'px';
+        console.log('drag move x: ' + x + ' y:' + y);
     }
 
     function closeDragElement() {
