@@ -285,7 +285,7 @@
                     border: none;
                     cursor: pointer;
                     outline: none;
-                    width: 30px;
+                    width: 50px;
                     height: 30px;
                     margin: 0;
                     padding: 0;
@@ -293,7 +293,7 @@
                     background-color: transparent;
                     transition: all 0.3s ease-in-out;
                     display: grid;
-                    grid-template-columns: 15px 30px;
+                    grid-template-columns: 20px 30px;
                     grid-template-rows: 15px 15px;
                     gap: 0px;
                     align-items: center;
@@ -494,11 +494,11 @@
 
             <div class="menu">
                 <button class="toggleMenu">
-                    <svg class="autoUpdateIcon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15">
+                    <svg class="autoUpdateIcon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 15 15">
                         <path fill="currentColor" fill-rule="evenodd" d="M1.903 7.297c0 3.044 2.207 5.118 4.686 5.547a.521.521 0 1 1-.178 1.027C3.5 13.367.861 10.913.861 7.297c0-1.537.699-2.745 1.515-3.663c.585-.658 1.254-1.193 1.792-1.602H2.532a.5.5 0 0 1 0-1h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V2.686l-.001.002c-.572.43-1.27.957-1.875 1.638c-.715.804-1.253 1.776-1.253 2.97Zm11.108.406c0-3.012-2.16-5.073-4.607-5.533a.521.521 0 1 1 .192-1.024c2.874.54 5.457 2.98 5.457 6.557c0 1.537-.699 2.744-1.515 3.663c-.585.658-1.254 1.193-1.792 1.602h1.636a.5.5 0 1 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 1 1 1 0v1.845h.002c.571-.432 1.27-.958 1.874-1.64c.715-.803 1.253-1.775 1.253-2.97Z" clip-rule="evenodd" />
                     </svg>
 
-                    <svg class="selectModeIcon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 512 512">
+                    <svg class="selectModeIcon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 512 512">
                         <path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="48" d="M144 144h320M144 256h320M144 368h320" />
                         <path fill="none" stroke="currentColor" stroke-linecap="square" stroke-linejoin="round" stroke-width="32" d="M64 128h32v32H64zm0 112h32v32H64zm0 112h32v32H64z" />
                     </svg>
@@ -612,10 +612,6 @@
                 // set global volume
                 globalVolume.value = gameManager.mainvolume;
                 GlobalVolumeValue.innerHTML = gameManager.mainvolume;
-
-                // set settingsMode
-                // why ?
-                // settingsMode = settingsModeInput.checked;
             }
 
             //
@@ -782,6 +778,7 @@
             // add an event listener to each element to send the current video list to the server
             //
             function createSelectList(videos) {
+                selectListElements.innerHTML = '';
                 videos.forEach((video, i) => {
                     let div = document.createElement('div');
                     div.classList.add('selectListElement', 'shadow');
