@@ -1,5 +1,13 @@
 # Video Wall
 
+## todo
+
+- gezoomtzes video in main in json als string speichern (name) 
+- eintrag "zoom" kan raus
+- Volume in mobile in header
+- direct zoom icon iun header
+- direct zoo m is like setting liust with zoomed vieio on top
+- 
 
 ## Done
 - Ich hab die php Datei noch tewas ändern müssen, sie muss ja, bei erfolgreicher Speierung, die Daten wieder zurückgeben.
